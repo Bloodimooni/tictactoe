@@ -13,15 +13,22 @@ GAME = True
 WINS = [0,0,0]
 GAMEMODE = ["simulation","pvc","pvp"]
 EMPTY = "[ ]"
-
+QUICK_MODE = False
+COMPUTER1_STRATEGY = 1
+COMPUTER2_STRATEGY = 0
+WAIT_TIME = 0
+PRINT_WAIT_TIME = 0
 
 def clear():
     os.system("cls")
 
 def print_field(field_data):
-    clear()
-    print("\n",field_data[0],field_data[1],field_data[2],"\n",field_data[3],field_data[4],field_data[5],"\n",field_data[6],field_data[7],field_data[8],"\n")
-    time.sleep(0.1)
+    if QUICK_MODE == True:
+        pass
+    else:
+        clear()
+        print("\n",field_data[0],field_data[1],field_data[2],"\n",field_data[3],field_data[4],field_data[5],"\n",field_data[6],field_data[7],field_data[8],"\n")
+        time.sleep(PRINT_WAIT_TIME)
 
 def check_draw(field=list):
     count = field.count(EMPTY)
@@ -29,7 +36,7 @@ def check_draw(field=list):
         print_field(field)
         return True
 
-def get_valid_pos_autoselect(field=list):
+def strategy_random(field=list):
 
     while True:    
         
@@ -41,6 +48,51 @@ def get_valid_pos_autoselect(field=list):
         else:
             pass
             #print(f"Chose: {pos}")
+
+def strategy_corners(field=list):
+
+    while True:
+
+        #   VALUES
+        pos = 0
+
+        #   favour positions
+        favour = [0,2,6,8]
+        wincondition = [[0,2],[0,6],[0,8],
+                        [2,6],[2,8],[6,8]]
+
+        #   Check if a favour position is available:
+        for x in favour:
+            for y in range(0,len(wincondition)):
+                z = wincondition[y]
+                if (field[z[0]] == field[z[1]]) and (field[round((z[0] + z[1]) / 2)] == EMPTY) and not field[z[0]] == EMPTY:
+                    #print(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {round((z[0] + z[1]) / 2)}")
+                    #time.sleep(1)
+                    return round((z[0] + z[1]) / 2)
+                else:
+                    #   Check for open center:
+                    if field[4] == EMPTY:
+                        #print("[!]\tTOOK MIDDLE POSITION")
+                        #time.sleep(1)
+                        return 4
+
+                    #   Check for open corners:
+                    elif field[x] == EMPTY:
+                        #print("[!]\tTOOK OPEN CORNER")
+                        #time.sleep(1)
+                        return x
+
+                    else:
+                        continue
+        
+        pos = random.randint(0,8)
+        if field[pos] == EMPTY:
+            #print("[!]\tTOOK RANDOM POSITION")
+            #time.sleep(1)
+            return pos
+        else:
+            continue
+                
             
 
     
@@ -141,71 +193,135 @@ def players_turn(players_char,field):
 def play(field, who_starts, gamemode):
     
     if who_starts == 0:
+        start_player = 1
         char1 = colored("[X]","red")
         char2 = colored("[O]","blue")
     else:
-        char1 = colored("[O]","red")
-        char2 = colored("[X]","blue")
+        start_player = 2
+        char1 = colored("[X]","blue")
+        char2 = colored("[O]","red")
     
     while True:
         
         ##  SIMULATION MODE ##
         if gamemode == GAMEMODE[0]:
         
-            draw = check_draw(field)
-            if draw == True:
-                print_field(field)
-                print(colored("DRAW","magenta"))
-                time.sleep(2)
-                break
-            
-            else:
-                player1 = get_valid_pos_autoselect(field)
+            if start_player == 1:
+                draw = check_draw(field)
+                if draw == True:
+                    print_field(field)
+                    print(colored("DRAW","magenta"))
+                    time.sleep(WAIT_TIME)
+                    break
                 
-            field[player1] = char1
-            player, win = check_win(field)
-            if win == True:   
-                print_field(field)
-                print(player)
-                time.sleep(1)
-                if "X" in player:
-                    return "X"
-                elif "O" in player:
-                    return "O"
-            else:
-                print_field(field)
+                else:
+                    if COMPUTER1_STRATEGY == 0:
+                        player1 = strategy_random(field)
+                    else:
+                        player1 = strategy_corners(field)
+                    
+                field[player1] = char1
+                player, win = check_win(field)
+                if win == True:   
+                    print_field(field)
+                    print(player)
+                    time.sleep(WAIT_TIME)
+                    if "X" in player:
+                        return "X"
+                    elif "O" in player:
+                        return "O"
+                else:
+                    print_field(field)
 
-            draw = check_draw(field)
-            if draw == True:
-                print_field(field)
-                print(colored("DRAW","magenta"))
-                time.sleep(1)
-                break
-            
-            else:
-                player2 = get_valid_pos_autoselect(field)
+                draw = check_draw(field)
+                if draw == True:
+                    print_field(field)
+                    print(colored("DRAW","magenta"))
+                    time.sleep(WAIT_TIME)
+                    break
                 
-            field[player2] = char2
-            #print(f"Spieler O hat das Kästchen {player2} gewählt")
-            player, win = check_win(field)
-            
-            if win == True:
-                print_field(field)
-                print(player)
-                time.sleep(1)
-                if "X" in player:
-                    return "X"
-                elif "O" in player:
-                    return "O"
-            else:            
-                print_field(field)
+                else:
+                    if COMPUTER2_STRATEGY == 0:
+                        player2 = strategy_random(field)
+                    else:
+                        player2 = strategy_corners(field)
+                    
+                field[player2] = char2
+                #print(f"Spieler O hat das Kästchen {player2} gewählt")
+                player, win = check_win(field)
+                
+                if win == True:
+                    print_field(field)
+                    print(player)
+                    time.sleep(WAIT_TIME)
+                    if "X" in player:
+                        return "X"
+                    elif "O" in player:
+                        return "O"
+                else:            
+                    print_field(field)
 
+            if start_player == 2:
+
+                draw = check_draw(field)
+                if draw == True:
+                    print_field(field)
+                    print(colored("DRAW","magenta"))
+                    time.sleep(WAIT_TIME)
+                    break
+                
+                else:
+                    if COMPUTER2_STRATEGY == 0:
+                        player2 = strategy_random(field)
+                    else:
+                        player2 = strategy_corners(field)
+                    
+                field[player2] = char2
+                player, win = check_win(field)
+                if win == True:   
+                    print_field(field)
+                    print(player)
+                    time.sleep(WAIT_TIME)
+                    if "X" in player:
+                        return "X"
+                    elif "O" in player:
+                        return "O"
+                else:
+                    print_field(field)
+
+                draw = check_draw(field)
+                if draw == True:
+                    print_field(field)
+                    print(colored("DRAW","magenta"))
+                    time.sleep(WAIT_TIME)
+                    break
+                
+                else:
+                    if COMPUTER1_STRATEGY == 0:
+                        player1 = strategy_random(field)
+                    else:
+                        player1 = strategy_corners(field)
+                    
+                field[player1] = char1
+                #print(f"Spieler O hat das Kästchen {player2} gewählt")
+                player, win = check_win(field)
+                
+                if win == True:
+                    print_field(field)
+                    print(player)
+                    time.sleep(WAIT_TIME)
+                    if "X" in player:
+                        return "X"
+                    elif "O" in player:
+                        return "O"
+                else:            
+                    print_field(field)
 
         ##  PLAYER VERSUS COMPUTER  ##
         
         elif gamemode == GAMEMODE[1]:
-            print("[+] DEBUG:\tGAMEMODE PVC SELECTED, NOW STARTING GAME.")
-
+            QUICK_MODE = False
+            #print("[+] DEBUG:\tGAMEMODE PVC SELECTED, NOW STARTING GAME.")
             if who_starts == 0:
 
                 #   Players turn
@@ -245,7 +361,11 @@ def play(field, who_starts, gamemode):
                 else:
                     print_field(field)
                 
-                selection = get_valid_pos_autoselect(field)
+                if COMPUTER1_STRATEGY == 0:
+                    selection = strategy_random(field)
+                else:
+                    selection = strategy_corners(field)
+
                 field[selection] = char2
                 
                 player, win = check_win(field)
@@ -262,8 +382,24 @@ def play(field, who_starts, gamemode):
                 
             else:
                 
-                selection = get_valid_pos_autoselect(field)
+                if COMPUTER1_STRATEGY == 0:
+                    selection = strategy_random(field)
+                else:
+                    selection = strategy_corners(field)
                 field[selection] = char1
+
+                player, win = check_win(field)
+                if win == True:   
+                    print_field(field)
+                    print(player)
+                    time.sleep(1)
+                    if "X" in player:
+                        return "X"
+                    elif "O" in player:
+                        return "O"
+                else:
+                    print_field(field)
+                    time.sleep(1)
                 
                 #   Players turn
                 draw = check_draw(field)
@@ -292,7 +428,7 @@ def play(field, who_starts, gamemode):
                     time.sleep(1)
                   
         elif gamemode == GAMEMODE[2]:
-            
+            QUICK_MODE = False
             ##  PVP ##
             #   Player1's turn
             draw = check_draw(field)
@@ -349,15 +485,18 @@ def play(field, who_starts, gamemode):
 ## START ###
 
 count = 0
-gamecount = random.randint(1,20)
+gamecount = 1000 #random.randint(1,20)
 print(f"Playing {gamecount} rounds.\n\n")
 time.sleep(2)
-print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
+QUICK_MODE = True
 
+
+####### GAMEMODE SELECTION #########
+print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
 while True:
     try:
         gamemode = int(input("(1,2,3):\t")) -1
-        print(f"[+] DEBUG:\tYOU CHOSE: {GAMEMODE[gamemode]}")
+        #print(f"[+] DEBUG:\tYOU CHOSE: {GAMEMODE[gamemode]}")
         if gamemode < 0 or gamemode >= 3:
             raise Exception
         else:
@@ -365,6 +504,43 @@ while True:
             break
     except Exception:
         print("Please only select 1,2 or 3 as an option!")
+
+
+if gamemode == GAMEMODE[0]:
+    while True:
+        try:
+            COMPUTER1_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for Computer 1:\t"))
+            COMPUTER2_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for Computer 2:\t"))
+            QUICK_MODE = int(input("Do you want to use quickmode? (0 : No\t1 : Yes):\t"))
+            if COMPUTER1_STRATEGY < 0 or COMPUTER1_STRATEGY > 1:
+                raise Exception
+            elif COMPUTER2_STRATEGY < 0 or COMPUTER2_STRATEGY > 1:
+                raise Exception
+            elif QUICK_MODE < 0 or QUICK_MODE > 1:
+                raise Exception
+            else:
+                if QUICK_MODE == 1:
+                    QUICK_MODE = True
+                    WAIT_TIME = 0.05
+
+                elif QUICK_MODE == 0:
+                    QUICK_MODE = False
+                    WAIT_TIME = 1
+                    PRINT_WAIT_TIME = 0.3
+                break
+        except Exception:
+            print("Please only select 0 or 1 as an option!")
+
+elif gamemode == GAMEMODE[1]:
+    while True:
+        try:
+            COMPUTER1_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for your Computer opponent:\t"))
+            if COMPUTER1_STRATEGY < 0 or COMPUTER1_STRATEGY > 1:
+                raise Exception
+            else:
+                break
+        except Exception:
+            print("Please only select 0 or 1 as an option!")
 
 
 while GAME == True:
@@ -376,7 +552,6 @@ while GAME == True:
     
     start = count % 2
     
-        
     try:
         if count % round((gamecount/10)) == 0:
             value = round(count / round((gamecount/100)))
@@ -397,3 +572,4 @@ while GAME == True:
         
 clear()
 print(f"\nRESULTS:\nX\t:\t{WINS[0]}\nO\t:\t{WINS[1]}\nDRAW\t:\t{WINS[2]}\n")
+input()
