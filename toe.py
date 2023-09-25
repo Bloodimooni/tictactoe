@@ -84,13 +84,13 @@ def strategy_corners(field=list):
                     if QUICK_MODE == False:
                         time.sleep(1)
                 return z[2]
-            """elif field[4] == EMPTY:
+            elif field[4] == EMPTY:
                 if DEBUG == True:
                     print(colored("Good condition found, middle is open:","green"))
                     print("[!]\tTOOK MIDDLE POSITION")
                     if QUICK_MODE == False:
                         time.sleep(1)
-                return 4"""
+                return 4
         
 
         #   Check for open corners:
