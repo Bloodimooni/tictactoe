@@ -13,7 +13,7 @@ GAME = True
 WINS = [0,0,0]
 GAMEMODE = ["simulation","pvc","pvp"]
 EMPTY = "[ ]"
-QUICK_MODE = False
+QUICK_MODE = bool
 COMPUTER1_STRATEGY = 1
 COMPUTER2_STRATEGY = 0
 WAIT_TIME = 0
@@ -58,40 +58,50 @@ def strategy_corners(field=list):
 
         #   favour positions
         favour = [0,2,6,8]
-        wincondition = [[0,2],[0,6],[0,8],
-                        [2,6],[2,8],[6,8]]
+        wincondition = [[0,2,1],[0,6,3],[0,8,4],
+                        [2,6,4],[2,8,5],[6,8,7],
+                        [3,5,4],[1,7,4],[0,1,2],
+                        [6,7,8],[7,8,6],[4,5,3],
+                        [1,2,0],[0,3,6],[1,4,7],
+                        [2,5,8],[6,3,0],[7,4,1],
+                        [5,8,2],[0,4,8],[4,8,0],
+                        [2,4,6],[3,4,5],[6,4,2]]
 
         #   Check if a favour position is available:
-        for x in favour:
-            for y in range(0,len(wincondition)):
-                z = wincondition[y]
-                if (field[z[0]] == field[z[1]]) and (field[round((z[0] + z[1]) / 2)] == EMPTY) and not field[z[0]] == EMPTY:
-                    #print(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {round((z[0] + z[1]) / 2)}")
-                    #time.sleep(1)
-                    return round((z[0] + z[1]) / 2)
-                else:
-                    #   Check for open center:
-                    if field[4] == EMPTY:
-                        #print("[!]\tTOOK MIDDLE POSITION")
-                        #time.sleep(1)
-                        return 4
-
-                    #   Check for open corners:
-                    elif field[x] == EMPTY:
-                        #print("[!]\tTOOK OPEN CORNER")
-                        #time.sleep(1)
-                        return x
-
-                    else:
-                        continue
+        for y in range(0,len(wincondition)):
+            z = wincondition[y]
+            print(f"[+] DEBUG : z is : {z}\nFIELD[z[0]] is : {field[z[0]]}\nFIELD[z[1]] is : {field[z[1]]}\nFIELD[z[2]] is : {field[z[2]]}\nY is currently at {y}")
+            time.sleep(0.1)
+            if (field[z[0]] == field[z[1]]) and (field[z[2]] == EMPTY) and not field[z[0]] == EMPTY:
+                print(colored(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {z[2]}","magenta"))
+                time.sleep(1)
+                return z[2]
+            elif field[4] == EMPTY:
+                print(colored("Good condition found, middle is open:","green"))
+                print("[!]\tTOOK MIDDLE POSITION")
+                time.sleep(1)
+                return 4
         
+
+        #   Check for open corners:
+        for x in range(0,len(favour)):
+            if field[favour[x]] == EMPTY:
+                print(colored("No winning condition found:","red"))
+                print("[!]\tTOOK OPEN CORNER")
+                time.sleep(1)
+                return favour[x]
+
         pos = random.randint(0,8)
         if field[pos] == EMPTY:
-            #print("[!]\tTOOK RANDOM POSITION")
-            #time.sleep(1)
+            print(colored("No winning condition found:","red"))
+            print("[!]\tTOOK RANDOM POSITION")
+            time.sleep(1)
             return pos
         else:
             continue
+
+        
+        
                 
             
 
@@ -488,8 +498,6 @@ count = 0
 gamecount = 1000 #random.randint(1,20)
 print(f"Playing {gamecount} rounds.\n\n")
 time.sleep(2)
-QUICK_MODE = True
-
 
 ####### GAMEMODE SELECTION #########
 print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
@@ -532,6 +540,7 @@ if gamemode == GAMEMODE[0]:
             print("Please only select 0 or 1 as an option!")
 
 elif gamemode == GAMEMODE[1]:
+    QUICK_MODE = False
     while True:
         try:
             COMPUTER1_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for your Computer opponent:\t"))
@@ -546,8 +555,8 @@ elif gamemode == GAMEMODE[1]:
 while GAME == True:
     count +=1
     field = [EMPTY,EMPTY,EMPTY,
-        EMPTY,EMPTY,EMPTY,
-        EMPTY,EMPTY,EMPTY]
+             EMPTY,EMPTY,EMPTY,
+             EMPTY,EMPTY,EMPTY]
     #print_field(field)
     
     start = count % 2
