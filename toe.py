@@ -76,27 +76,32 @@ def strategy_corners(field=list):
             z = wincondition[y]
             if DEBUG == True:
                 print(f"[+] DEBUG : z is : {z}\nFIELD[z[0]] is : {field[z[0]]}\nFIELD[z[1]] is : {field[z[1]]}\nFIELD[z[2]] is : {field[z[2]]}\nY is currently at {y}")
-                #time.sleep(0.1)
+                if QUICK_MODE == False:
+                    time.sleep(0.3)
             if (field[z[0]] == field[z[1]]) and (field[z[2]] == EMPTY) and not field[z[0]] == EMPTY:
                 if DEBUG == True:
                     print(colored(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {z[2]}","magenta"))
-                    #time.sleep(1)
+                    if QUICK_MODE == False:
+                        time.sleep(1)
                 return z[2]
-            elif field[4] == EMPTY:
+            """elif field[4] == EMPTY:
                 if DEBUG == True:
                     print(colored("Good condition found, middle is open:","green"))
                     print("[!]\tTOOK MIDDLE POSITION")
-                    #time.sleep(1)
-                return 4
+                    if QUICK_MODE == False:
+                        time.sleep(1)
+                return 4"""
         
 
         #   Check for open corners:
         for x in range(0,len(favour)):
+            x = random.randint(0,3)
             if field[favour[x]] == EMPTY:
                 if DEBUG == True:
                     print(colored("No winning condition found:","red"))
                     print("[!]\tTOOK OPEN CORNER")
-                    #time.sleep(1)
+                    if QUICK_MODE == False:
+                        time.sleep(1)
                 return favour[x]
 
         pos = random.randint(0,8)
@@ -104,7 +109,8 @@ def strategy_corners(field=list):
             if DEBUG == True:
                 print(colored("No winning condition found:","red"))
                 print("[!]\tTOOK RANDOM POSITION")
-                #time.sleep(1)
+                if QUICK_MODE == False:
+                    time.sleep(1)
             return pos
         else:
             continue
@@ -225,6 +231,9 @@ def play(field, who_starts, gamemode):
                 if draw == True:
                     print_field(field)
                     print(colored("DRAW","magenta"))
+                    if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                     time.sleep(WAIT_TIME)
                     break
                 
@@ -241,6 +250,9 @@ def play(field, who_starts, gamemode):
                     print(player)
                     time.sleep(WAIT_TIME)
                     if "X" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "X"
                     elif "O" in player:
                         if DEBUG == True:
@@ -254,6 +266,9 @@ def play(field, who_starts, gamemode):
                 if draw == True:
                     print_field(field)
                     print(colored("DRAW","magenta"))
+                    if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                     time.sleep(WAIT_TIME)
                     break
                 
@@ -272,6 +287,9 @@ def play(field, who_starts, gamemode):
                     print(player)
                     time.sleep(WAIT_TIME)
                     if "X" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "X"
                     elif "O" in player:
                         if DEBUG == True:
@@ -287,6 +305,9 @@ def play(field, who_starts, gamemode):
                 if draw == True:
                     print_field(field)
                     print(colored("DRAW","magenta"))
+                    if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                     time.sleep(WAIT_TIME)
                     break
                 
@@ -303,6 +324,9 @@ def play(field, who_starts, gamemode):
                     print(player)
                     time.sleep(WAIT_TIME)
                     if "X" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "X"
                     elif "O" in player:
                         if DEBUG == True:
@@ -316,6 +340,9 @@ def play(field, who_starts, gamemode):
                 if draw == True:
                     print_field(field)
                     print(colored("DRAW","magenta"))
+                    if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                     time.sleep(WAIT_TIME)
                     break
                 
@@ -334,6 +361,9 @@ def play(field, who_starts, gamemode):
                     print(player)
                     time.sleep(WAIT_TIME)
                     if "X" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "X"
                     elif "O" in player:
                         if DEBUG == True:
@@ -514,7 +544,6 @@ count = 0
 gamecount = 1000 #random.randint(1,20)
 print(f"Playing {gamecount} rounds.\n\n")
 time.sleep(2)
-DEBUG = False
 
 ####### GAMEMODE SELECTION #########
 print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
@@ -537,6 +566,11 @@ if gamemode == GAMEMODE[0]:
             COMPUTER1_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for Computer 1:\t"))
             COMPUTER2_STRATEGY = int(input("Please select the Strategy (0 : RANDOM\t1 : CORNERS) for Computer 2:\t"))
             QUICK_MODE = int(input("Do you want to use quickmode? (0 : No\t1 : Yes):\t"))
+            DEBUG = input("Do you want to enable debug mode? (Default: False):\t")
+            if DEBUG == None or DEBUG == "":
+                DEBUG = False
+            else:
+                DEBUG = True
             if COMPUTER1_STRATEGY < 0 or COMPUTER1_STRATEGY > 1:
                 raise Exception
             elif COMPUTER2_STRATEGY < 0 or COMPUTER2_STRATEGY > 1:
@@ -554,7 +588,7 @@ if gamemode == GAMEMODE[0]:
                     PRINT_WAIT_TIME = 0.3
                 break
         except Exception:
-            print("Please only select 0 or 1 as an option!")
+            print("Please only select 0 or 1 as an option!\nOr choose True / False for debug mode")
 
 elif gamemode == GAMEMODE[1]:
     QUICK_MODE = False
@@ -568,34 +602,41 @@ elif gamemode == GAMEMODE[1]:
         except Exception:
             print("Please only select 0 or 1 as an option!")
 
-
 while GAME == True:
-    count +=1
-    field = [EMPTY,EMPTY,EMPTY,
-             EMPTY,EMPTY,EMPTY,
-             EMPTY,EMPTY,EMPTY]
-    #print_field(field)
-    
-    start = count % 2
-    
     try:
-        if count % round((gamecount/10)) == 0:
-            value = round(count / round((gamecount/100)))
-            print(f"Reached {value}%")
-            print(f"X\t:\t{WINS[0]}\nO\t:\t{WINS[1]}\nDRAW\t:\t{WINS[2]}\n")
-    except:
-        pass        
-    winner = play(field,start,gamemode)
-    if winner == "X":
-        WINS[0] += 1
-    elif winner == "O":
-        WINS[1] += 1
-    else:
-        WINS[2] += 1
-       
-    if count >= gamecount:
-        GAME = False
+        count +=1
+        field = [EMPTY,EMPTY,EMPTY,
+                EMPTY,EMPTY,EMPTY,
+                EMPTY,EMPTY,EMPTY]
+        #print_field(field)
         
+        start = count % 2
+        
+        try:
+            if count % round((gamecount/10)) == 0:
+                value = round(count / round((gamecount/100)))
+                print(f"Reached {value}%")
+                print(f"X\t:\t{WINS[0]}\nO\t:\t{WINS[1]}\nDRAW\t:\t{WINS[2]}\n")
+        except:
+            pass        
+        winner = play(field,start,gamemode)
+        if winner == "X":
+            WINS[0] += 1
+        elif winner == "O":
+            WINS[1] += 1
+        else:
+            WINS[2] += 1
+        
+        if count >= gamecount:
+            exit()
+         
+    except KeyboardInterrupt:
+        clear()
+        print("Goodbye!")
+        time.sleep(0.5)
+        exit()
+    
 clear()
 print(f"\nRESULTS:\nX\t:\t{WINS[0]}\nO\t:\t{WINS[1]}\nDRAW\t:\t{WINS[2]}\n")
 input()
+exit()
