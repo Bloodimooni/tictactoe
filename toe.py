@@ -24,6 +24,9 @@ def clear():
     os.system("cls")
 
 def print_field(field_data):
+    if DEBUG == True:
+        print("\n",field_data[0],field_data[1],field_data[2],"\n",field_data[3],field_data[4],field_data[5],"\n",field_data[6],field_data[7],field_data[8],"\n")
+        time.sleep(PRINT_WAIT_TIME)
     if QUICK_MODE == True:
         pass
     else:
@@ -73,17 +76,17 @@ def strategy_corners(field=list):
             z = wincondition[y]
             if DEBUG == True:
                 print(f"[+] DEBUG : z is : {z}\nFIELD[z[0]] is : {field[z[0]]}\nFIELD[z[1]] is : {field[z[1]]}\nFIELD[z[2]] is : {field[z[2]]}\nY is currently at {y}")
-            time.sleep(0.1)
+                #time.sleep(0.1)
             if (field[z[0]] == field[z[1]]) and (field[z[2]] == EMPTY) and not field[z[0]] == EMPTY:
                 if DEBUG == True:
                     print(colored(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {z[2]}","magenta"))
-                    time.sleep(1)
+                    #time.sleep(1)
                 return z[2]
             elif field[4] == EMPTY:
                 if DEBUG == True:
                     print(colored("Good condition found, middle is open:","green"))
                     print("[!]\tTOOK MIDDLE POSITION")
-                    time.sleep(1)
+                    #time.sleep(1)
                 return 4
         
 
@@ -93,7 +96,7 @@ def strategy_corners(field=list):
                 if DEBUG == True:
                     print(colored("No winning condition found:","red"))
                     print("[!]\tTOOK OPEN CORNER")
-                    time.sleep(1)
+                    #time.sleep(1)
                 return favour[x]
 
         pos = random.randint(0,8)
@@ -101,7 +104,7 @@ def strategy_corners(field=list):
             if DEBUG == True:
                 print(colored("No winning condition found:","red"))
                 print("[!]\tTOOK RANDOM POSITION")
-                time.sleep(1)
+                #time.sleep(1)
             return pos
         else:
             continue
@@ -240,6 +243,9 @@ def play(field, who_starts, gamemode):
                     if "X" in player:
                         return "X"
                     elif "O" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "O"
                 else:
                     print_field(field)
@@ -268,6 +274,9 @@ def play(field, who_starts, gamemode):
                     if "X" in player:
                         return "X"
                     elif "O" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "O"
                 else:            
                     print_field(field)
@@ -296,6 +305,9 @@ def play(field, who_starts, gamemode):
                     if "X" in player:
                         return "X"
                     elif "O" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "O"
                 else:
                     print_field(field)
@@ -324,6 +336,9 @@ def play(field, who_starts, gamemode):
                     if "X" in player:
                         return "X"
                     elif "O" in player:
+                        if DEBUG == True:
+                            print_field(field)
+                            input("Enter to continue:")
                         return "O"
                 else:            
                     print_field(field)
@@ -499,7 +514,7 @@ count = 0
 gamecount = 1000 #random.randint(1,20)
 print(f"Playing {gamecount} rounds.\n\n")
 time.sleep(2)
-DEBUG = True
+DEBUG = False
 
 ####### GAMEMODE SELECTION #########
 print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
