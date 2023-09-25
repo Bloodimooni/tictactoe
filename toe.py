@@ -17,6 +17,7 @@ QUICK_MODE = bool
 COMPUTER1_STRATEGY = 1
 COMPUTER2_STRATEGY = 0
 WAIT_TIME = 0
+DEBUG = False
 PRINT_WAIT_TIME = 0
 
 def clear():
@@ -70,40 +71,40 @@ def strategy_corners(field=list):
         #   Check if a favour position is available:
         for y in range(0,len(wincondition)):
             z = wincondition[y]
-            print(f"[+] DEBUG : z is : {z}\nFIELD[z[0]] is : {field[z[0]]}\nFIELD[z[1]] is : {field[z[1]]}\nFIELD[z[2]] is : {field[z[2]]}\nY is currently at {y}")
+            if DEBUG == True:
+                print(f"[+] DEBUG : z is : {z}\nFIELD[z[0]] is : {field[z[0]]}\nFIELD[z[1]] is : {field[z[1]]}\nFIELD[z[2]] is : {field[z[2]]}\nY is currently at {y}")
             time.sleep(0.1)
             if (field[z[0]] == field[z[1]]) and (field[z[2]] == EMPTY) and not field[z[0]] == EMPTY:
-                print(colored(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {z[2]}","magenta"))
-                time.sleep(1)
+                if DEBUG == True:
+                    print(colored(f"[!]\tFOUND A WINNING CONDITION {z}\nGoing for field: {z[2]}","magenta"))
+                    time.sleep(1)
                 return z[2]
             elif field[4] == EMPTY:
-                print(colored("Good condition found, middle is open:","green"))
-                print("[!]\tTOOK MIDDLE POSITION")
-                time.sleep(1)
+                if DEBUG == True:
+                    print(colored("Good condition found, middle is open:","green"))
+                    print("[!]\tTOOK MIDDLE POSITION")
+                    time.sleep(1)
                 return 4
         
 
         #   Check for open corners:
         for x in range(0,len(favour)):
             if field[favour[x]] == EMPTY:
-                print(colored("No winning condition found:","red"))
-                print("[!]\tTOOK OPEN CORNER")
-                time.sleep(1)
+                if DEBUG == True:
+                    print(colored("No winning condition found:","red"))
+                    print("[!]\tTOOK OPEN CORNER")
+                    time.sleep(1)
                 return favour[x]
 
         pos = random.randint(0,8)
         if field[pos] == EMPTY:
-            print(colored("No winning condition found:","red"))
-            print("[!]\tTOOK RANDOM POSITION")
-            time.sleep(1)
+            if DEBUG == True:
+                print(colored("No winning condition found:","red"))
+                print("[!]\tTOOK RANDOM POSITION")
+                time.sleep(1)
             return pos
         else:
             continue
-
-        
-        
-                
-            
 
     
 def check_win(field):
@@ -498,6 +499,7 @@ count = 0
 gamecount = 1000 #random.randint(1,20)
 print(f"Playing {gamecount} rounds.\n\n")
 time.sleep(2)
+DEBUG = True
 
 ####### GAMEMODE SELECTION #########
 print(f"Please select the Gamemode:\n{GAMEMODE[0]} : 1\n{GAMEMODE[1]} : 2\n{GAMEMODE[2]} : 3")
